@@ -1,0 +1,49 @@
+import time, shelve, conf
+
+temps = {}
+passes = {}
+creationtime = time.strftime("%x %X")
+motdfile = open("motd.txt", "r")
+motd = motdfile.read()
+motdfile.close()
+logf = open("log.txt", "w")
+conlist = []
+instances = {}
+class services :
+    def __init__(self) :
+        pass
+    def send(self, message) :
+        pass
+nickservinstance = services()
+chanservinstance = services()
+evalservinstance = services()
+operservinstance = services()
+serviceshost = ""
+connections = {}
+connections[chanservinstance] = {"nick":"ChanServ", "realname":"ChanServ", "host":serviceshost, "ident":"ChanServ", "connection":chanservinstance, "channels":[conf.service_channel], "longname":"ChanServ!ChanServ@%s" % (serviceshost)}
+connections[nickservinstance] = {"nick":"NickServ", "realname":"NickServ", "host":serviceshost, "ident":"NickServ", "connection":nickservinstance, "channels":[conf.service_channel], "longname":"NickServ!NickServ@%s" % (serviceshost)}
+connections[evalservinstance] = {"nick":"EvalServ", "realname":"EvalServ", "host":serviceshost, "ident":"EvalServ", "connection":evalservinstance, "channels":[], "longname":"EvalServ!EvalServ@%s" % (serviceshost)}
+connections[operservinstance] = {"nick":"OperServ", "realname":"OperServ", "host":serviceshost, "ident":"OperServ", "connection":operservinstance, "channels":[conf.service_channel], "longname":"OperServ!OperServ@%s" % (serviceshost)}
+channels = {conf.service_channel:{"nicks":{"NickServ":["o"], "ChanServ":["o"], "OperServ":["o"]}, "topic":{"topic":"Services Channel", "author":"ChanServ", "creation":str(int(time.time()))}, "flags":[], "banned":[]}}
+
+nicks = {"ChanServ":{"host":serviceshost, "realname":"ChanServ", "ident":"ChanServ", "connection":chanservinstance, "channels":[], "longname":"ChanServ!ChanServ@%s" % (serviceshost)}, "NickServ":{"host":serviceshost, "realname":"NickServ", "ident":"NickServ", "connection":nickservinstance, "channels":[], "longname":"NickServ!NickServ@%s" % (serviceshost)}, "EvalServ":{"host":serviceshost, "realname":"EvalServ", "ident":"EvalServ", "connection":evalservinstance, "channels":[], "longname":"EvalServ!EvalServ@%s" % (serviceshost)}}
+nicks["OperServ"] = {"realname":"OperServ", "host":serviceshost, "ident":"OperServ", "connection":operservinstance, "channels":[conf.service_channel], "longname":"OperServ!OperServ@%s" % (serviceshost)}
+
+services = nicks.keys()
+userdb = shelve.open("users.db", writeback=True)
+chandb = shelve.open("channels.db", writeback=True)
+casetrans = {}
+for nick in nicks.keys() :
+    casetrans[nick.lower()] = nick
+regtrans = {}
+for nick in userdb.keys() :
+    regtrans[nick.lower()] = nick
+chantrans = {}
+for channel in channels :
+    chantrans[channel.lower()] = channel
+waitingfordata = False
+try :
+    import ssl
+    pythonversion = "2.6"
+except :
+    pythonversion = "2.5"

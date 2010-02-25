@@ -1,0 +1,12 @@
+network_name = ""
+network_hostname = ""
+port = 6667
+debug = True
+network_website = ""
+bannedips = []
+service_channel = ""
+#Passwords are sha512'd
+#level is the oper level, max is 5.  Only 5's can use evalserv
+opers = {"":{"level":5, "password":"", "hostname":""}}
+sslport = 6697
+qwebirc = "CGIIRC" #change this
