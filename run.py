@@ -84,10 +84,10 @@ def sslserv() :
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         if world.pythonversion == "2.5" :
             contextobject = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv3_METHOD)
-            contextobject.use_certificate_file("cert.pem")
-            contextobject.use_privatekey_file("cert.pem")
+            contextobject.use_certificate_file(conf.certfile)
+            contextobject.use_privatekey_file(conf.keyfile)
             s = OpenSSL.SSL.Connection(contextobject, s)
-        else : s = ssl.wrap_socket(s, certfile="cert.pem", keyfile="cert.pem")
+        else : s = ssl.wrap_socket(s, certfile=conf.certfile keyfile=conf.keyfile)
         s.bind(('', conf.sslport))
         s.listen(1)
     except: traceback.print_exc()

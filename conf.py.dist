@@ -10,3 +10,5 @@ service_channel = ""
 opers = {"":{"level":5, "password":"", "hostname":""}}
 sslport = 6697
 qwebirc = "CGIIRC" #change this
+certfile = "" #path to the cert file for ssl
+keyfile = "" #path to the private key file for ssl
