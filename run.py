@@ -87,7 +87,7 @@ def sslserv() :
             contextobject.use_certificate_file(conf.certfile)
             contextobject.use_privatekey_file(conf.keyfile)
             s = OpenSSL.SSL.Connection(contextobject, s)
-        else : s = ssl.wrap_socket(s, certfile=conf.certfile keyfile=conf.keyfile)
+        else : s = ssl.wrap_socket(s, certfile=conf.certfile, keyfile=conf.keyfile)
         s.bind(('', conf.sslport))
         s.listen(1)
     except: traceback.print_exc()
