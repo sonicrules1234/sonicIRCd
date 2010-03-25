@@ -51,8 +51,7 @@ def waitfordata() :
                         world.conlist.remove(connection)
                 del tempconlist
         else :
-            world.waitingfordata = False
-            break
+            time.sleep(3)
 
 def regserv() :
         
