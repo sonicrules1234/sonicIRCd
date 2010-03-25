@@ -50,6 +50,9 @@ def waitfordata() :
                         except : pass
                         world.conlist.remove(connection)
                 del tempconlist
+        else :
+            world.waitingfordata = False
+            break
 
 def regserv() :
         
@@ -128,9 +131,9 @@ try:
         pass
     else:
         pid = os.fork() 
-	if pid > 0:
+        if pid > 0:
 	    # exit first parent
-	    sys.exit(0) 
+            sys.exit(0) 
 except OSError, e: 
     sys.stderr.write("fork #1 failed: %d (%s)\n" % (e.errno, e.strerror))
     sys.exit(1)
