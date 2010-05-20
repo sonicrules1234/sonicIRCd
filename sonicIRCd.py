@@ -188,7 +188,6 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
         self.address = address[0]
         self.ip = address[0]
         self.status = ["connected"]
-        self.history = []
         try :
             self.address = socket.gethostbyaddr(self.address)[0]
         except : pass
@@ -234,80 +233,69 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
         for line in lines[:-1] :
             info["raw"] = line
             info["words"] = line.split(" ")
-            decision = self.examine(info)
-            if decision :
-                return "Rehash"
-        return "No rehash"
-
-    def examine(self, info) :
-        now = time.time()
-        for x in self.history :
-            if x 
-
-    def decide(self, info) :
-        if "user" not in self.status :
-            if info["words"][0].upper() == "NICK" :
+            if "user" not in self.status :
+                if info["words"][0].upper() == "NICK" :
+                    self.on_NICK(info)
+                if info["words"][0].upper() == "USER" :
+                    self.on_USER(info)
+                if info["words"][0].upper() == "PASS" :
+                    self.on_PASS(info)
+            elif info["words"][0].upper() == "NICK" :
                 self.on_NICK(info)
-            if info["words"][0].upper() == "USER" :
-                self.on_USER(info)
-            if info["words"][0].upper() == "PASS" :
-                self.on_PASS(info)
-        elif info["words"][0].upper() == "NICK" :
-            self.on_NICK(info)
-        elif info["words"][0].upper() == "JOIN" :
-            self.on_JOIN(info)
-        elif info["words"][0].upper() == "PRIVMSG" :
-            self.on_PRIVMSG(info)
-        elif info["raw"].startswith("PING LAG") :
-            self.on_PING_LAG(info)
-        elif info["words"][0].upper() == "QUIT" :
-            self.on_QUIT(info)
-        elif info["words"][0].upper() == "PART" :
-            self.on_PART(info)
-        elif info["words"][0].upper() == "MODE" :
-            self.on_MODE(info)
-        elif info["words"][0].upper() == "KICK" :
-            self.on_KICK(info)
-        elif info["words"][0].upper() == "PING" :
-            self.on_PING(info)
-        elif info["words"][0].upper() == "NOTICE" :
-            self.on_NOTICE(info)
-        elif info["words"][0].upper() == "TOPIC" :
-            self.on_TOPIC(info)
-        elif info["words"][0].upper() == "LIST" :
-            self.on_LIST(info)
-        elif info["words"][0].upper() == "WHOIS" :
-            self.on_WHOIS(info)
-        elif info["words"][0].upper() == "INVITE" :
-            self.on_INVITE(info)
-        elif info["words"][0].upper() == "WHO" :
-            self.on_WHO(info)
-        elif info["words"][0].upper() in ["NS", "NICKSERV"] :
-            self.nickserv(" ".join(info["words"][1:]))
-        elif info["words"][0].upper() in ["CS", "CHANSERV"] :
-            self.chanserv(" ".join(info["words"][1:]))
-        elif info["words"][0].upper() in ["OS", "OPERSERV"] :
-            self.operserv(" ".join(info["words"][1:]))            
-        elif info["words"][0].upper() == "NAMES" :
-            self.on_NAMES(info)
-        elif info["words"][0].upper() == "OPER" :
-            self.on_OPER(info)
-        elif info["words"][0].upper() == "MKPASSWD" :
-            self.on_MKPASSWD(info)
-        elif info["words"][0].upper() == "VERSION" :
-            self.on_VERSION(info)
-        elif info["words"][0].upper() == "ISON" :
-            pass
-        elif info["words"][0].upper() == "KLINE" :
-            self.on_KLINE(info)
-        elif info["raw"] == "" :
-            pass #this is to ignore blank lines, for weird clients
-        elif info["words"][0].upper() == "REHASH" :
-            if self.isoper() :
-                reload(conf)
-                return "Rehash"
-        else : self.msg_send(self.sock, "421 %s %s :Unknown command" % (self.getnick(), info["words"][0]))
-        
+            elif info["words"][0].upper() == "JOIN" :
+                self.on_JOIN(info)
+            elif info["words"][0].upper() == "PRIVMSG" :
+                self.on_PRIVMSG(info)
+            elif info["raw"].startswith("PING LAG") :
+                self.on_PING_LAG(info)
+            elif info["words"][0].upper() == "QUIT" :
+                self.on_QUIT(info)
+            elif info["words"][0].upper() == "PART" :
+                self.on_PART(info)
+            elif info["words"][0].upper() == "MODE" :
+                self.on_MODE(info)
+            elif info["words"][0].upper() == "KICK" :
+                self.on_KICK(info)
+            elif info["words"][0].upper() == "PING" :
+                self.on_PING(info)
+            elif info["words"][0].upper() == "NOTICE" :
+                self.on_NOTICE(info)
+            elif info["words"][0].upper() == "TOPIC" :
+                self.on_TOPIC(info)
+            elif info["words"][0].upper() == "LIST" :
+                self.on_LIST(info)
+            elif info["words"][0].upper() == "WHOIS" :
+                self.on_WHOIS(info)
+            elif info["words"][0].upper() == "INVITE" :
+                self.on_INVITE(info)
+            elif info["words"][0].upper() == "WHO" :
+                self.on_WHO(info)
+            elif info["words"][0].upper() in ["NS", "NICKSERV"] :
+                self.nickserv(" ".join(info["words"][1:]))
+            elif info["words"][0].upper() in ["CS", "CHANSERV"] :
+                self.chanserv(" ".join(info["words"][1:]))
+            elif info["words"][0].upper() in ["OS", "OPERSERV"] :
+                self.operserv(" ".join(info["words"][1:]))            
+            elif info["words"][0].upper() == "NAMES" :
+                self.on_NAMES(info)
+            elif info["words"][0].upper() == "OPER" :
+                self.on_OPER(info)
+            elif info["words"][0].upper() == "MKPASSWD" :
+                self.on_MKPASSWD(info)
+            elif info["words"][0].upper() == "VERSION" :
+                self.on_VERSION(info)
+            elif info["words"][0].upper() == "ISON" :
+                pass
+            elif info["words"][0].upper() == "KLINE" :
+                self.on_KLINE(info)
+            elif info["raw"] == "" :
+                pass #this is to ignore blank lines, for weird clients
+            elif info["words"][0].upper() == "REHASH" :
+                if self.isoper() :
+                    reload(conf)
+                    return "Rehash"
+            else : self.msg_send(self.sock, "421 %s %s :Unknown command" % (self.getnick(), info["words"][0]))
+        return "No rehash"
 
     def on_KLINE(self, info) :
         if self.minlevel(4) :
@@ -321,7 +309,7 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
 
     def on_VERSION(self, info) :
         self.msg_send(self.sock, "351 %s sonicIRCd-.0.1 %s :" % (self.getnick(), conf.network_hostname))
-        self.msg_send(self.sock, "005 %s CHANTYPES=# PREFIX=(ohv)@%%+ CHANMODES=b,o,h,v,mgntCT NETWORK=%s CASEMAPPING=rfc1459" % (self.getnick(), conf.network_name))
+        self.msg_send(self.sock, "005 %s CHANTYPES=# PREFIX=(ohv)@%%+ CHANMODES=b,o,h,v, NETWORK=%s CASEMAPPING=rfc1459" % (self.getnick(), conf.network_name))
     def on_MKPASSWD(self, info) :
         if self.minlen(info, 2) :
             self.notice(hashlib.sha512(info["words"][1]).hexdigest(), "OperServ", self.getnick())
@@ -484,7 +472,7 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
                     if access[0] :
                         if modeletter == "v" and "v" in access[1] :
                             proceed = True
-                        elif modeletter == "h" and "v" in access[1] :
+                        elif modeletter == "h" and "h" in access[1] :
                             proceed = True
                         elif modeletter == "o" and "o" in access[1] :
                             proceed = True
@@ -708,7 +696,7 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
             channel = self.transchan(info["words"][1])
             if len(world.channels[channel]["flags"]) != 0 : self.msg_send(self.sock, "324 %s %s +%s" % (self.getnick(), channel, "".join(world.channels[channel]["flags"])))
     def setchannelmode(self, nick, channel, yesno, mode) :
-        supportedmodes = ["m", "g", "n", "t", "C", "T"]
+        supportedmodes = ["m", "g", "n", "t", "C", "Z"]
         if yesno : plusminus = "+"
         else : plusminus = "-"
         if mode in supportedmodes :
@@ -752,6 +740,7 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
                     response = str(eval(message))
                     self.msg2_send(self.sock, "NOTICE %s :%s" % (self.getnick(), response), "EvalServ!EvalServ@" + world.serviceshost)
                 except :
+                    traceback.print_exc()
                     response = "An error occured"
                     self.msg2_send(self.sock, "NOTICE %s :%s" % (self.getnick(), response), "EvalServ!EvalServ@" + world.serviceshost)
             elif channel == "NickServ" :
@@ -763,9 +752,9 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
             else : self.msg_send(self.sock, "401 %s %s :No such nick/channel" % (self.getnick(), channel))
 
     def onlyopsnotice(self, nick, channel) :
-        if "T" in world.channels[channel]["flags"] :
+        if "Z" in world.channels[channel]["flags"] :
             if world.channels[channel]["nicks"].has_key(nick) :
-                if "o" in world.channels[channel]["nicks"][nick] or "h" in world.channels[channel]["nicks"][nick] :
+                if "o" in world.channels[channel]["nicks"][nick] :
                     return True
                 else : return False
             else : return False
@@ -1106,7 +1095,7 @@ For more help on a specific ChanServ command, type: /msg ChanServ HELP <command>
         self.msg_send(self.sock, "002 %s :Your host is %s, running version sonicIRCd-.0.1" % (nick, conf.network_hostname))
         self.msg_send(self.sock, "003 %s :This server was created %s" % (nick, world.creationtime))
         self.msg_send(self.sock, "004 %s sonicIRCd-.0.1  bohv" % (self.getnick()))
-        self.msg_send(self.sock, "005 %s CHANTYPES=# PREFIX=(ohv)@%%+ CHANMODES=b,o,h,v,mgntCT NETWORK=%s CASEMAPPING=rfc1459""005 %s CHANTYPES=# PREFIX=(ohv)@%%+ CHANMODES=b,o,h,v, NETWORK=%s CASEMAPPING=rfc1459" % (self.getnick(), conf.network_name))
+        self.msg_send(self.sock, "005 %s CHANTYPES=# PREFIX=(ohv)@%%+ CHANMODES=b,o,h,v, NETWORK=%s CASEMAPPING=rfc1459" % (self.getnick(), conf.network_name))
         self.msg_send(self.sock, "375 %s :%s message of the day" % (nick, conf.network_hostname))
         for motdline in world.motd.split("\n") :
             self.msg_send(self.sock, "372 %s :- %s" % (nick, motdline.replace("\r", "")))
